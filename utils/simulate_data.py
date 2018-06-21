@@ -1,38 +1,38 @@
 import random
 
 
-def generate_game_data(player_1, player_2):
-    return random.choices([player_1.get('name'), player_2.get('name')],
-                          [player_1.get('serve'), player_2.get('return')])[0]
-
-
-def winning_condition_set(score):
+def set_winner(score):
     if (score[0] == 6) and (score[1] <= 4):
-        return True
+        return 0
     elif (score[1] == 6) and (score[0] <= 4):
-        return True
+        return 1
     elif (score[0] == 7) and (score[1] == 6):
-        return True
+        return 0
     elif (score[1] == 7) and (score[0] == 6):
-        return True
+        return 1
     else:
-        return False
+        return -1
 
 
-def generate_set_data(player_1, player_2):
+def generate_readable_score_per_set(games_won):
+    return [games_won.count(0), games_won.count(1)]
+
+
+def generate_set_data(player_0, player_1):
     score = [0, 0]
     games_won = []
-    while not winning_condition_set(score):
+    services = []
+    while set_winner(score) == -1:
         if sum(score) % 2 == 0:
-            winning_player = generate_game_data(player_1, player_2)
+            services.append(0)
+            games_won.append(random.choices([0, 1],
+                                            [player_0.get('serve'), player_1.get('return')])[0])
         else:
-            winning_player = generate_game_data(player_2, player_1)
-        games_won.append(winning_player)
-        if winning_player == player_1.get('name'):
-            score[0] += 1
-        else:
-            score[1] += 1
-    return games_won
+            services.append(1)
+            games_won.append(random.choices([1, 0],
+                                            [player_1.get('serve'), player_0.get('return')])[0])
+        score = generate_readable_score_per_set(games_won)
+    return services, games_won
 
 
 if __name__ == '__main__':
@@ -40,7 +40,8 @@ if __name__ == '__main__':
               "serve": 50,
               "return": 50}
     king = {"name": "king",
-            "serve": 500000,
-            "return": 500000}
-    result = generate_set_data(king, romain)
+            "serve": 50,
+            "return": 50}
+    _, result = generate_set_data(romain, king)
     print(result)
+    print(generate_readable_score_per_set(result))
