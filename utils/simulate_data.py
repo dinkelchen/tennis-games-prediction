@@ -59,12 +59,12 @@ def into_pandas_format(match_id, player_0, player_1, match_result):
     server = flatten(match_result.get('services'))
     winner = flatten(match_result.get('games_won'))
     length_of_match = len(server)
+    player_names = (player_0.get('name'), player_1.get('name'))
     df = pd.DataFrame(data={'Match_id': [match_id] * length_of_match,
-                            'Player_1': [player_0.get('name')] * length_of_match,
-                            'Player_2': [player_1.get('name')] * length_of_match,
+                            'Server': [player_names[i] for i in server],
+                            'Returner': [player_names[1 - i] for i in server],
                             'Game_id': range(length_of_match),
-                            'Server': server,
-                            'Winner': winner})
+                            'Broken': abs(pd.np.array(winner) - pd.np.array(server))})
     return df
 
 

@@ -1,18 +1,17 @@
 import pandas as pd
-
+from sklearn.metrics import log_loss
 from utils.simulate_data import generate_match_data, into_pandas_format
 
 
 class SimpleBaseline:
     def __init__(self):
-        self.serve_winning_percentage = None
+        self.breaking_percentage = None
 
     def fit(self, X, y):
-        self.serve_winning_percentage = (X['Server'] == y).mean()
+        self.breaking_percentage = y.mean()
 
     def predict(self, X):
-        return X['Server'].apply(
-            lambda x: 1 - self.serve_winning_percentage if x == 0 else self.serve_winning_percentage)
+        return pd.np.repeat(self.breaking_percentage, X.shape[0])
 
 
 def main():
@@ -34,9 +33,9 @@ def main():
     test = df[train_size:]
 
     classifier = SimpleBaseline()
-    classifier.fit(train.drop('Winner', axis=1), train['Winner'])
-    predictions = classifier.predict(test.drop('Winner', axis=1))
-    print(pd.concat([predictions, test['Winner']], axis=1))
+    classifier.fit(train.drop('Broken', axis=1), train['Broken'])
+    predictions = classifier.predict(test.drop('Broken', axis=1))
+    print(log_loss(test['Broken'], predictions))
 
 
 if __name__ == '__main__':
