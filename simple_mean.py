@@ -3,7 +3,7 @@ from sklearn.metrics import log_loss
 from utils.simulate_data import generate_match_data, into_pandas_format
 
 
-class SimpleBaseline:
+class SimpleMean:
     def __init__(self):
         self.breaking_percentage = None
 
@@ -17,7 +17,7 @@ class SimpleBaseline:
 def main():
     romain = {"name": "romain",
               "serve": 50,
-              "return": 10}
+              "return": 1}
     king = {"name": "king",
             "serve": 50,
             "return": 10}
@@ -32,7 +32,7 @@ def main():
     train = df[:train_size]
     test = df[train_size:]
 
-    classifier = SimpleBaseline()
+    classifier = SimpleMean()
     classifier.fit(train.drop('Broken', axis=1), train['Broken'])
     predictions = classifier.predict(test.drop('Broken', axis=1))
     print(log_loss(test['Broken'], predictions))
